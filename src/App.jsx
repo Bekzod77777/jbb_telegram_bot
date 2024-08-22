@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import Card from "./components/card/card";
 import Cart from "./components/cart/cart";
-import { getData } from "./const/db";
+import { getData } from "./constants/db";
 
 const courses = getData();
 
@@ -33,7 +33,7 @@ const App = () => {
     const existItem = cartItems.find((c) => c.id == item.id);
 
     if (existItem.quantity === 1) {
-      const newData = cartItems.filter((c) => c.id != existItem.id);
+      const newData = cartItems.filter((c) => c.id !== existItem.id);
       setCartItems(newData);
     } else {
       const newData = cartItems.map((c) =>
@@ -54,15 +54,18 @@ const App = () => {
     const queryID = telegram.initDataUnsafe?.query_id;
 
     if (queryID) {
-      fetch("https://jbbcorptelegrambot-d1f66cd82ce2.herokuapp.com/web-data", {
+      fetch("https://jbbcorptelegrambot-d1f66cd82ce2.herokuapp.com//web-data", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ products: cartItems, queryID: queryID }),
+        body: JSON.stringify({
+          products: cartItems,
+          queryID: queryID,
+        }),
       });
     } else {
-      telegram.sendData(cartItems);
+      telegram.sendData(JSON.stringify(cartItems));
     }
   }, [cartItems]);
 
@@ -74,8 +77,7 @@ const App = () => {
 
   return (
     <>
-      <h1 className="heading">JBBCORP kurslar</h1>
-      {/* Cart */}
+      <h1 className="heading">Sammi kurslar</h1>
       <Cart cartItems={cartItems} onCheckout={onCheckout} />
       <div className="cards__container">
         {courses.map((course) => (
